@@ -1,7 +1,22 @@
 $(document).ready(function() {
 
-    app.canvasId = '#canvas';
+    // config
     app.debug = false;
+    app.canvasId = '#canvas';
+    app.pointColor = '#000000';
+
+    // initialise the reset button
+    $('#reset').click(function(){
+        app.canvas.clearRect(0, 0, canvas.width, canvas.height);
+        app.init();
+    });
+
+    $(app.canvasId).click(function(e){
+        app.addPoint(e.pageX, e.pageY);
+    });
+
+
+
     app.init();
 });
 
@@ -16,16 +31,20 @@ app.init = function() {
     this.canvas = this.canvasElement.getContext("2d");
 
 
-    // get click events
-    $(app.canvasId).click(function(e){
-        app.addPoint(e.pageX, e.pageY);
-    });
+    // get canvas center
+    var datum = {};
+    datum.x = $(app.canvasId).width() / 2;
+    datum.y = $(app.canvasId).height() / 2;
+
+    // add datum
+    this.addPoint(datum.x, datum.y, '#0000ff');
+
 
     // draw profile
-    this.drawProfileGraph(this.circleProfile());
+    //this.drawProfileGraph(this.circleProfile());
 
     // draw the actual profile
-    this.drawProfile(this.circleProfile());
+    //this.drawProfile(this.circleProfile());
 
 };
 
@@ -57,68 +76,24 @@ app.circleProfile = function(){
 // ====== UTILITIES =======
 
 
-/*
- * draw a graph from a profile
- * profile is arr of 365 integers
- */
 
-app.drawProfileGraph = function(profile){
-
-    this.log(profile);
-
-    // get highest point
-    var highestPoint = 0;
-    for(var i=0; i< profile.length; i++) {
-        if(highestPoint < profile[i]) {
-            highestPoint = profile[i];
-        }
+app.plotGraphPoint = function(angle, distance)
+{
+    while(angle > 360) {
+        angle = angle - 360;
     }
 
-    var graphHeight = highestPoint + 10;
-
-    for(var i=0; i< profile.length; i++) {
-
-        var y = graphHeight - profile[i];
-        var x = (i+1)*2;
-
-        // add point for this value
-        this.addPoint(x, y);
-
-        // add datum
-        this.addPoint(x, graphHeight);
-    }
+    // add point for this value
+    this.addPoint(angle, distance, '#0000ff');
 };
-
-
-/*
- * draws a profile from the center of the canvas
- */
-app.drawProfile = function(profile){
-
-    // get canvas center
-    var datum = {};
-    datum.x = $(app.canvasId).width() / 2;
-    datum.y = $(app.canvasId).height() / 2;
-
-    // add datum
-    this.addPoint(datum.x, datum.y);
-
-
-    // loop through profile and render
-    for(var i=0; i< profile.length; i++) {
-        // add point for this value
-        this.plotPoint(i, profile[i]);
-    }
-
-
-};
-
 
 /*
  * plot a point from the center of the center of the canvas
  * at distance given
  */
 app.plotPoint = function(angle, distance){
+
+    distance = distance * 1;
 
     // get canvas center
     var datum = {};
@@ -133,15 +108,27 @@ app.plotPoint = function(angle, distance){
     // plot the point
     app.addPoint(datum.x + x, datum.y + y);
 
-    console.log('angle: '+ angle +', distance: '+ distance +', plot: '+ x +', '+ y);
+    this.log('angle: '+ angle +', distance: '+ distance +', plot: '+ x +', '+ y);
+
+    // add point to graph
+    app.plotGraphPoint(angle, distance);
 
 };
 
 
 // draw a single point on the canvas
-app.addPoint = function(x, y)
+app.addPoint = function(x, y, color)
 {
+
+    if(typeof(color) != 'undefined') {
+        this.canvas.fillStyle = color;
+    }else {
+        this.canvas.fillStyle = this.pointColor;
+    }
+
     this.log(x+', '+y);
+
+
     this.canvas.fillRect(x,y,2,2);
 };
 

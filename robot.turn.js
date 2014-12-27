@@ -4,16 +4,20 @@ robot.turn.isTurning = false;
 
 robot.turn.callback = function(data) {
   if (robot.turn.isTurning === true) {
-    console.log(data);
+    app.log(data);
     $("#distance").html(data);
     var t = Date.now() - robot.turn.started;
     var rCount = t/$("#one_turn").val();
     $("#angle").html(360* (rCount % 1));
+
+    // plot point
+    angle = 360* (rCount % 1);
+    app.plotPoint(angle, data);
   }
 };
 
 robot.turn.startTurn = function() {
-  console.log("starting turn");
+  app.log("starting turn");
   robot.turn.started = Date.now();
   robot.sendData("a");
   robot.turn.isTurning = true;
@@ -21,7 +25,7 @@ robot.turn.startTurn = function() {
 };
 
 robot.turn.stopTurn = function() {
-  console.log("stopping turn");
+  app.log("stopping turn");
   robot.sendData("z");
   robot.turn.isTurning = false;
 };
