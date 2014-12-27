@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-    app.debug = true;
+    app.debug = false;
     app.init();
 });
 
@@ -31,8 +31,21 @@ app.init = function() {
 app.circleProfile = function(){
     profile = Array();
 
-    for(var i=0; i< 365; i++) {
-        profile[i] = 400;
+    // regular circle
+    for(var i=0; i< 360; i++) {
+       // profile[i] = 400;
+    }
+
+    radius = 300;
+    offsetY = 10;
+    offsetX = 0;
+
+    for(var angle=0; angle< 365; angle++) {
+
+        // calculate how much of the Y offset is relevant
+        var relativeOffsetY = offsetY - ( offsetY * Math.sin(toRadians(angle)) );
+
+        profile[angle] = radius - relativeOffsetY;
     }
 
     return profile;
@@ -60,16 +73,18 @@ app.drawProfileGraph = function(profile){
         }
     }
 
+    var graphHeight = highestPoint + 10;
 
     for(var i=0; i< profile.length; i++) {
 
-        var graphHeight = highestPoint + 10;
+        var y = graphHeight - profile[i];
+        var x = (i+1)*2;
 
         // add point for this value
-        this.addPoint(i+1, graphHeight - profile[i]);
+        this.addPoint(x, y);
 
         // add datum
-        this.addPoint(i+1, graphHeight);
+        this.addPoint(x, graphHeight);
     }
 };
 
@@ -79,7 +94,7 @@ app.addPoint = function(x, y)
 {
     this.log(x+', '+y);
     this.canvas.fillRect(x,y,2,2);
-}
+};
 
 
 // enable logging
@@ -87,4 +102,14 @@ app.log = function(str){
     if(this.debug) {
         console.log(str);
     }
+};
+
+
+function toDegrees (angle) {
+    return angle * (180 / Math.PI);
+}
+
+
+function toRadians (angle) {
+    return angle * (Math.PI / 180);
 }
