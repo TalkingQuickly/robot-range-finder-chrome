@@ -1,0 +1,11 @@
+{
+  "name": "Robot Range Finder",
+  "description": "Maps a room with a robot with graphics and stuff",
+  "version": "0.1",
+  "manifest_version": 2,
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
+    }
+  }
+}
