@@ -3,9 +3,18 @@
   <head>
     <script src="jquery-1.11.2.min.js"></script>
     <script src="bootstrap.js"></script>
-    <script src="serial.js"></script>
+    <script src="robot_control.js"></script>
   </head>
   <body>
     <canvas id="canvas" width="800" height="800" style="background-color:#fff"></canvas>
+    <div id="control">
+      <input type="text" id="one_turn"/>
+      <a id="turn">Start Turning</a>
+      <a id="stop_turn">Stop Turning</a>
+      Angle:
+      <span id="angle">NA</span>
+      Distance:
+      <span id="distance">NA</span>
+    </div>
   </body>
 </html>
