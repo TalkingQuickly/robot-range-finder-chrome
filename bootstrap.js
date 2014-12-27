@@ -1,5 +1,6 @@
 $(document).ready(function() {
 
+    app.canvasId = '#canvas';
     app.debug = false;
     app.init();
 });
@@ -16,29 +17,29 @@ app.init = function() {
 
 
     // get click events
-    $("#canvas").click(function(e){
+    $(app.canvasId).click(function(e){
         app.addPoint(e.pageX, e.pageY);
     });
 
     // draw profile
     this.drawProfileGraph(this.circleProfile());
 
+    // draw the actual profile
+    this.drawProfile(this.circleProfile());
+
 };
+
+
+
 
 
 // ======== PROFILES ==========
 
 app.circleProfile = function(){
-    profile = Array();
+    var profile = Array();
 
-    // regular circle
-    for(var i=0; i< 360; i++) {
-       // profile[i] = 400;
-    }
-
-    radius = 300;
-    offsetY = 10;
-    offsetX = 0;
+    var radius = 300;
+    var offsetY = 100;// how far (y) from the center of the circle is the origin?
 
     for(var angle=0; angle< 365; angle++) {
 
@@ -86,6 +87,54 @@ app.drawProfileGraph = function(profile){
         // add datum
         this.addPoint(x, graphHeight);
     }
+};
+
+
+/*
+ * draws a profile from the center of the canvas
+ */
+app.drawProfile = function(profile){
+
+    // get canvas center
+    var datum = {};
+    datum.x = $(app.canvasId).width() / 2;
+    datum.y = $(app.canvasId).height() / 2;
+
+    // add datum
+    this.addPoint(datum.x, datum.y);
+
+
+    // loop through profile and render
+    for(var i=0; i< profile.length; i++) {
+        // add point for this value
+        this.plotPoint(i, profile[i]);
+    }
+
+
+};
+
+
+/*
+ * plot a point from the center of the center of the canvas
+ * at distance given
+ */
+app.plotPoint = function(angle, distance){
+
+    // get canvas center
+    var datum = {};
+    datum.x = $(app.canvasId).width() / 2;
+    datum.y = $(app.canvasId).height() / 2;
+
+    // get relative cords from datum
+    // opp = sine * hyp
+    y = Math.round(Math.sin(toRadians(angle)) * distance);
+    x = Math.round(Math.cos(toRadians(angle)) * distance);
+
+    // plot the point
+    app.addPoint(datum.x + x, datum.y + y);
+
+    console.log('angle: '+ angle +', distance: '+ distance +', plot: '+ x +', '+ y);
+
 };
 
 
