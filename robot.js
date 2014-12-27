@@ -1,7 +1,12 @@
 var robot = {};
 
+robot.onConnected = function(connectionInfo) {
+  console.log("connected to robot");
+  robot.serialID = connectionInfo.connectionId;
+};
+
 robot.connect = function() {
-  chrome.serial.connect("/dev/tty.usbserial-A8004xq1", {bitrate: 9600}, function() {console.log("connected to robot!")});
+  chrome.serial.connect("/dev/tty.usbserial-A8004xq1", {bitrate: 9600}, robot.onConnected);
 };
 
 robot._dataBuffer = '';
@@ -21,10 +26,22 @@ robot.handleData = function(data) {
   }
 };
 
+robot.dataCallbacks = [];
+
 robot.processData = function(data) {
-  console.log(data);
+  robot.dataCallbacks.forEach(function(cb) {
+    cb(data);
+  })
 };
 
+robot.sendData = function(str) {
+  var buf=new ArrayBuffer(str.length);
+  var bufView=new Uint8Array(buf);
+  for (var i=0; i<str.length; i++) {
+    bufView[i]=str.charCodeAt(i);
+  }
+  chrome.serial.send(robot.serialID, buf, function() {console.log("sent");})
+};
 
 // actually do stuff
 chrome.serial.onReceive.addListener(robot.handleData);
