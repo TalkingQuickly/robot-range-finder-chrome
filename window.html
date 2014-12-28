@@ -7,17 +7,53 @@
     <script src="robot.turn.js"></script>
     <script src="interface.bindings.js"></script>
   </head>
+  <style>
+
+    body {
+        background: black;
+        color: white;
+    }
+    .buttons {
+        list-style: none;
+        float: right;
+        display: inline;
+        margin: 0;
+        padding: 0;
+        width: 350px;
+        height: 20px;
+    }
+    .buttons a {
+        width: 100px;
+        height: 20px;
+        line-height: 20px;
+        text-align: center;
+        display:block;
+        border: solid 1px #cccccc;
+        margin-left: 10px;
+        float:left;
+    }
+  </style>
   <body>
     <canvas id="canvas" width="800" height="800" style="background-color:#fff"></canvas>
     <div id="control">
       <input type="text" id="one_turn" value="2400"/>
-      <a id="reset">Reset</a>
-      <a id="start_turn">Start Turning</a>
-      <a id="stop_turn">Stop Turning</a>
+
       Angle:
       <span id="angle">NA</span>
       Distance:
       <span id="distance">NA</span>
+
+      <ul  class="buttons">
+            <li>
+                <a id="reset">Reset</a>
+            </li>
+          <li>
+              <a id="start_turn">Start Turning</a>
+          </li>
+          <li>
+              <a id="stop_turn">Stop Turning</a>
+          </li>
+      </ul>
     </div>
   </body>
 </html>

@@ -2,16 +2,19 @@ $(document).ready(function() {
 
     // config
     app.debug = false;
-    app.canvasId = '#canvas';
-    app.pointColor = '#000000';
+    app.contextId = '#canvas';
+    app.pointColor = 'rgba(150, 255, 150, 0.3)';
+    app.pointSize = 3; // the pixel size of the points
+    app.amplification = 1; // the amount to amplify the distance
+
 
     // initialise the reset button
     $('#reset').click(function(){
-        app.canvas.clearRect(0, 0, canvas.width, canvas.height);
+        app.context.clearRect(0, 0, canvas.width, canvas.height);
         app.init();
     });
 
-    $(app.canvasId).click(function(e){
+    $(app.contextId).click(function(e){
         app.addPoint(e.pageX, e.pageY);
     });
 
@@ -28,47 +31,40 @@ app.init = function() {
     // initialise canvas
     this.log("initialised");
     this.canvasElement = document.getElementById("canvas");
-    this.canvas = this.canvasElement.getContext("2d");
+    this.context = this.canvasElement.getContext("2d");
 
 
     // get canvas center
     var datum = {};
-    datum.x = $(app.canvasId).width() / 2;
-    datum.y = $(app.canvasId).height() / 2;
+    datum.x = $(app.contextId).width() / 2;
+    datum.y = $(app.contextId).height() / 2;
 
-    // add datum
-    this.addPoint(datum.x, datum.y, '#0000ff');
-
-
-    // draw profile
-    //this.drawProfileGraph(this.circleProfile());
-
-    // draw the actual profile
-    //this.drawProfile(this.circleProfile());
-
+    // add grid
+    app.renderGrid();
 };
 
+/**
+ * renders the radial grid
+ */
+app.renderGrid = function() {
 
+    x = $(app.contextId).width() / 2;
+    y = $(app.contextId).height() / 2;
 
+    for(var i=20; i > 0; i--) {
+        gridSize = ((i * 50) * app.amplification);
 
-
-// ======== PROFILES ==========
-
-app.circleProfile = function(){
-    var profile = Array();
-
-    var radius = 300;
-    var offsetY = 100;// how far (y) from the center of the circle is the origin?
-
-    for(var angle=0; angle< 365; angle++) {
-
-        // calculate how much of the Y offset is relevant
-        var relativeOffsetY = offsetY - ( offsetY * Math.sin(toRadians(angle)) );
-
-        profile[angle] = radius - relativeOffsetY;
+        this.context.beginPath();
+        this.context.arc(x, y, gridSize, 0, 2 * Math.PI, false);
+        this.context.fillStyle = 'black';
+        this.context.fill();
+        this.context.lineWidth = 1;
+        this.context.strokeStyle = '#003300';
+        this.context.stroke();
     }
 
-    return profile;
+
+
 }
 
 
@@ -87,18 +83,20 @@ app.plotGraphPoint = function(angle, distance)
     this.addPoint(angle, distance, '#0000ff');
 };
 
+
 /*
  * plot a point from the center of the center of the canvas
  * at distance given
  */
 app.plotPoint = function(angle, distance){
 
-    distance = distance * 1;
+    // amplify distance
+    distance = distance * app.amplification;;
 
     // get canvas center
     var datum = {};
-    datum.x = $(app.canvasId).width() / 2;
-    datum.y = $(app.canvasId).height() / 2;
+    datum.x = $(app.contextId).width() / 2;
+    datum.y = $(app.contextId).height() / 2;
 
     // get relative cords from datum
     // opp = sine * hyp
@@ -121,15 +119,19 @@ app.addPoint = function(x, y, color)
 {
 
     if(typeof(color) != 'undefined') {
-        this.canvas.fillStyle = color;
+        this.context.fillStyle = color;
     }else {
-        this.canvas.fillStyle = this.pointColor;
+        this.context.fillStyle = this.pointColor;
     }
 
     this.log(x+', '+y);
 
 
-    this.canvas.fillRect(x,y,2,2);
+    //this.context.fillRect(x,y,20,20);
+
+    this.context.beginPath();
+    this.context.arc(x, y, app.pointSize, 0, 2 * Math.PI, false);
+    this.context.fill();
 };
 
 
